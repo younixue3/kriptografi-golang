@@ -1,59 +1,44 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
-// text adalah parameter nilai yang akan di enkripsi dan shift adalah parameter untuk jumlah langkap penggeseran nilai enkripsi
-func EncryptcaesarCipher(text string, shift int) string {
-	result := ""
-	// Perulangan Looping untuk setiap huruf
+func vigenereCipher(text string, key string) string {
+	var terenkripsi string
+	kunciIndex := 0
 	for _, char := range text {
-		// Validasi percabangan apakah nilai merupakan huruf kapital
-		if char >= 'A' && char <= 'Z' {
-			// Penggeseran nilai jika dibutuhkan
-			shifted := (int(char-'A') + shift) % 26
-			// Konversi nilai yang dihasilkan dari penggesran ke nilai karakter
-			result += string(rune(shifted + 'A'))
-		} else if char >= 'a' && char <= 'z' {
-			// Penggeseran nilai jika dibutuhkan
-			shifted := (int(char-'a') + shift) % 26
-			// Konversi nilai yang dihasilkan dari penggesran ke nilai karakter
-			result += string(rune(shifted + 'a'))
-		} else {
-			// Jika nilai tidak berupa huruf, maka kan di return default
-			result += string(char)
+		if char >= 'a' && char <= 'z' {
+			char = (char-'a'+rune(key[kunciIndex]-'a'))%26 + 'a'
+			kunciIndex = (kunciIndex + 1) % len(key)
+		} else if char >= 'A' && char <= 'Z' {
+			char = (char-'A'+rune(key[kunciIndex]-'a'))%26 + 'A'
+			kunciIndex = (kunciIndex + 1) % len(key)
 		}
+		terenkripsi += string(char)
 	}
-	return result
-}
-
-func DecryptcaesarCipher(text string, shift int) string {
-	result := ""
-	// Perulangan Looping untuk setiap huruf
-	for _, char := range text {
-		// Check if the character is an uppercase letter
-		if char >= 'A' && char <= 'Z' {
-			// Apply the shift and wrap around if necessary
-			shifted := (int(char-'A') - shift + 26) % 26
-			// Convert the shifted index back to a character
-			result += string(rune(shifted + 'A'))
-		} else if char >= 'a' && char <= 'z' {
-			// Apply the shift and wrap around if necessary
-			shifted := (int(char-'a') - shift + 26) % 26
-			// Convert the shifted index back to a character
-			result += string(rune(shifted + 'a'))
-		} else {
-			// Leave the character as is if it's not a letter
-			result += string(char)
-		}
-	}
-	return result
+	return terenkripsi
 }
 
 func main() {
-	plaintext := "Ricko Caesar Aprilla Tiaka"
-	encrypted := EncryptcaesarCipher(plaintext, 3)
-	decrypted := DecryptcaesarCipher(encrypted, 3)
-	fmt.Println("Plain Text:", plaintext)
-	fmt.Println("Cipher Text:", encrypted)
-	fmt.Println("Decrypt Text:", decrypted)
+	text := "Ricko Caesar Aprilla Tiaka"
+	key := "tuki tuki dam dam"
+	encrypted := vigenereCipher(text, key)
+	fmt.Printf("Plaintext: %s\n", text)
+	fmt.Printf("Key: %s\n", key)
+	fmt.Printf("Enkripsi: %s\n", encrypted)
+	fmt.Printf("======================\n")
+	text = "Misalkan ini Plaintext"
+	key = "india aca aca aye aye"
+	encrypted = vigenereCipher(text, key)
+	fmt.Printf("Plaintext: %s\n", text)
+	fmt.Printf("Key: %s\n", key)
+	fmt.Printf("Enkripsi: %s\n", encrypted)
+	fmt.Printf("======================\n")
+	text = "Tubuhku kuat jiwaku sehat"
+	key = "aku anak sehat"
+	encrypted = vigenereCipher(text, key)
+	fmt.Printf("Plaintext: %s\n", text)
+	fmt.Printf("Key: %s\n", key)
+	fmt.Printf("Enkripsi: %s\n", encrypted)
 }
