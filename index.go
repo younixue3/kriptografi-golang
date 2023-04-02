@@ -2,40 +2,29 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
-func encryptTransposition(plaintext string) string {
-	// Buat matriks kosong dengan ukuran yang sesuai
-	ciphertext := ""
-	rows := len(plaintext) / 5
-	if len(plaintext)%5 != 0 {
-		rows++
-	}
-	m := make([][]rune, rows)
-	for i := range m {
-		m[i] = make([]rune, 5)
-	}
-
-	// Isi matriks dengan karakter plaintext
-	for i, r := range plaintext {
-		m[i/5][i%5] = r
-	}
-
-	// Buat ciphertext dengan membaca karakter dari matriks secara vertikal
-	for j := 0; j < 5; j++ {
-		for i := 0; i < rows; i++ {
-			if m[i][j] != 0 {
-				ciphertext += string(m[i][j])
-			}
+func vigenereCipher(text string, key string) string {
+	var terenkripsi string
+	kunciIndex := 0
+	for _, char := range text {
+		if char >= 'a' && char <= 'z' {
+			char = (char-'a'+rune(key[kunciIndex]-'a'))%26 + 'a'
+			kunciIndex = (kunciIndex + 1) % len(key)
+		} else if char >= 'A' && char <= 'Z' {
+			char = (char-'A'+rune(key[kunciIndex]-'a'))%26 + 'A'
+			kunciIndex = (kunciIndex + 1) % len(key)
 		}
+		terenkripsi += string(char)
 	}
-
-	return ciphertext
+	return terenkripsi
 }
 
 func main() {
-	plaintext := "IDUNIVERSITASMUHAMMADIYAHKALIMANTANTIMUR"
-	ciphertext := encryptTransposition(strings.ToLower(plaintext))
-	fmt.Println(ciphertext)
+	text := "SELAMAT MENJALANKAN IBADAH PUASA"
+	key := "TIAKA"
+	encrypted := vigenereCipher(text, key)
+	fmt.Printf("Plaintext: %s\n", text)
+	fmt.Printf("Key: %s\n", key)
+	fmt.Printf("Enkripsi: %s\n", encrypted)
 }
