@@ -1,59 +1,41 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-// text adalah parameter nilai yang akan di enkripsi dan shift adalah parameter untuk jumlah langkap penggeseran nilai enkripsi
-func EncryptcaesarCipher(text string) string {
-	result := ""
-	// Perulangan Looping untuk setiap huruf
-	for _, char := range text {
-		// Validasi percabangan apakah nilai merupakan huruf kapital
-		if char >= 'A' && char <= 'Z' {
-			// Penggeseran nilai jika dibutuhkan
-			shifted := (int(char-'A') + 9) % 26
-			// Konversi nilai yang dihasilkan dari penggesran ke nilai karakter
-			result += string(rune(shifted + 'A'))
-		} else if char >= 'a' && char <= 'z' {
-			// Penggeseran nilai jika dibutuhkan
-			shifted := (int(char-'a') + 9) % 26
-			// Konversi nilai yang dihasilkan dari penggesran ke nilai karakter
-			result += string(rune(shifted + 'a'))
-		} else {
-			// Jika nilai tidak berupa huruf, maka kan di return default
-			result += string(char)
+func encryptTransposition(plaintext string) string {
+	// Buat matriks kosong dengan ukuran yang sesuai
+	ciphertext := ""
+	rows := len(plaintext) / 5
+	if len(plaintext)%5 != 0 {
+		rows++
+	}
+	m := make([][]rune, rows)
+	for i := range m {
+		m[i] = make([]rune, 5)
+	}
+
+	// Isi matriks dengan karakter plaintext
+	for i, r := range plaintext {
+		m[i/5][i%5] = r
+	}
+
+	// Buat ciphertext dengan membaca karakter dari matriks secara vertikal
+	for j := 0; j < 5; j++ {
+		for i := 0; i < rows; i++ {
+			if m[i][j] != 0 {
+				ciphertext += string(m[i][j])
+			}
 		}
 	}
-	return result
-}
 
-func DecryptcaesarCipher(text string) string {
-	result := ""
-	// Perulangan Looping untuk setiap huruf
-	for _, char := range text {
-		// Check if the character is an uppercase letter
-		if char >= 'A' && char <= 'Z' {
-			// Apply the shift and wrap around if necessary
-			shifted := (int(char-'A') - 9 + 26) % 26
-			// Convert the shifted index back to a character
-			result += string(rune(shifted + 'A'))
-		} else if char >= 'a' && char <= 'z' {
-			// Apply the shift and wrap around if necessary
-			shifted := (int(char-'a') - 9 + 26) % 26
-			// Convert the shifted index back to a character
-			result += string(rune(shifted + 'a'))
-		} else {
-			// Leave the character as is if it's not a letter
-			result += string(char)
-		}
-	}
-	return result
+	return ciphertext
 }
 
 func main() {
-	plaintext := "RICKO CAESAR"
-	encrypted := EncryptcaesarCipher(plaintext)
-	decrypted := DecryptcaesarCipher(encrypted)
-	fmt.Println("Plain Text:", plaintext)
-	fmt.Println("Cipher Text:", encrypted)
-	fmt.Println("Decrypt Text:", decrypted)
+	plaintext := "IDUNIVERSITASMUHAMMADIYAHKALIMANTANTIMUR"
+	ciphertext := encryptTransposition(strings.ToLower(plaintext))
+	fmt.Println(ciphertext)
 }
